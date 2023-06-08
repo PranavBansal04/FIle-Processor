@@ -81,30 +81,6 @@ const getMostAndLeast = (data: wordDictObject, n: number): word[][] => {
     return [wordCount.slice(0, n), wordCount.slice(wordCount.length - n, wordCount.length)]
 }
 
-// const processFile = (fileName: string): Response<wordDictObject> => {
-//     const [error, lineReader] = getLineReader(fileName);
-//     if (error !== null) {
-//         return [error, null]
-//     }
-//     let data: wordDictObject = {};
-
-//     // the data object seems to lose all the values if returned without the on close event? why is that happening?
-//     lineReader
-//         .on('line', (line) => {
-//             data = { ...countWords({ ...data }, line) };
-//         })
-//         .on('close', function () {
-//             if (Object.keys(data).length === 0) {
-//                 return [new Error("No data found!"), null]
-//             }
-//             console.log(Object.keys(data).length)
-//             return [null, data]
-//         })
-
-//     console.log(Object.keys(data).length);
-//     return [new Error("Errors gathering data!"), null]
-// }
-
 
 const encryptor = (char: string, cipher: number): string => {
     const charCode = char.charCodeAt(0);
@@ -159,17 +135,6 @@ async function processFile(fileName: string): Promise<Response<wordDictObject>> 
             })
     });
 }
-
-
-// const [error, data] = processFile("input.txt");
-
-// if (error !== null) {
-//     console.log(error);
-// }
-// else {
-//     let numWords = 10
-//     getMostAndLeast(data, numWords);
-// }
 
 const FILE = "./data/input.txt"
 
@@ -244,15 +209,6 @@ async function translateText(text: string[], target: string): Promise<Response<s
         return [error, null]
     }
 }
-
-// async function translateText(text: string[], target: string) {
-//     let [translations] = await translate.translate(text, target);
-//     translations = Array.isArray(translations) ? translations : [translations];
-//     translations.forEach((translation, i) => {
-//         console.log("Original => ", text[i])
-//         console.log("Translated => ", translation);
-//     });
-// }
 
 
 // translate the input file instead of the stribng
