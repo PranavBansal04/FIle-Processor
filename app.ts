@@ -13,6 +13,17 @@ type Response<T> = [Error, null] | [null, T];
 type word = { value: string, count: number };
 type wordDictObject = { [key: string]: word };
 
+type encryptionKey = number & { __brand: 'encryptionKey' };
+
+// user defined type guard
+function isValidKey(value: unknown): value is encryptionKey {
+    if (typeof value === 'number' && value >= 1 && value <= 25) {
+        return true
+    }
+    return false
+}
+
+
 const getLineReader = (filePath: string): Response<readline.Interface> => {
     if (!fs.existsSync(filePath)) {
         return [new Error("file does not exist"), null]
@@ -42,8 +53,12 @@ const isValidUrl = (urlString: string): boolean => {
 
 
 // object signature
+// remove stop words as well, probably need to use the nltk package
 const countWords = (fileData: wordDictObject, line: string): wordDictObject => {
+    const stopwords = ['i','me','my','myself','we','our','ours','ourselves','you','your','yours','yourself','yourselves','he','him','his','himself','she','her','hers','herself','it','its','itself','they','them','their','theirs','themselves','what','which','who','whom','this','that','these','those','am','is','are','was','were','be','been','being','have','has','had','having','do','does','did','doing','a','an','the','and','but','if','or','because','as','until','while','of','at','by','for','with','about','against','between','into','through','during','before','after','above','below','to','from','up','down','in','out','on','off','over','under','again','further','then','once','here','there','when','where','why','how','all','any','both','each','few','more','most','other','some','such','no','nor','not','only','own','same','so','than','too','very','s','t','can','will','just','don','should','now']
     const words: string[] = line.split(" ");
+    // let's load english stopwords
+
     let newFileData: wordDictObject = { ...fileData };
     words.forEach(w => {
         let currentWord = w.toLowerCase().trim();
@@ -53,6 +68,9 @@ const countWords = (fileData: wordDictObject, line: string): wordDictObject => {
         // remove everything except letters
         currentWord = currentWord.replace(/[^a-z]/g, '');
         if (currentWord === "") {
+            return;
+        }
+        if(stopwords.includes(currentWord)){
             return;
         }
         if (currentWord in newFileData) {
@@ -68,7 +86,6 @@ const countWords = (fileData: wordDictObject, line: string): wordDictObject => {
 
 
 const getMostAndLeast = (data: wordDictObject, n: number): word[][] => {
-    // console.log(data)
     let wordCount: word[] = [];
     Object.keys(data).forEach(key => {
         wordCount.push(data[key])
@@ -77,28 +94,26 @@ const getMostAndLeast = (data: wordDictObject, n: number): word[][] => {
     wordCount.sort(function (a, b) {
         return b.count - a.count;
     });
-    // console.log(wordCount.slice(0, 10), wordCount.slice(wordCount.length - 10, wordCount.length))
     return [wordCount.slice(0, n), wordCount.slice(wordCount.length - n, wordCount.length)]
 }
 
 
-const encryptor = (char: string, cipher: number): string => {
+function encryptor(char: string, key: number): string {
     const charCode = char.charCodeAt(0);
     // A = 65, Z = 90
     // a = 97, z = 122
     return String.fromCharCode(
-        ((charCode + cipher) <= 122) ? charCode + cipher
-            : (charCode + cipher) % 122 + 96
+        ((charCode + key) <= 122) ? charCode + key
+            : (charCode + key) % 122 + 96
     );
 }
 
-const encryptText = (text: string): Response<string> => {
+function encryptText(text: string, key: encryptionKey): Response<string> {
     try {
-        const cipher: number = Math.floor(1 + Math.random() * 17);
-        console.log("Offset for encryption : ", cipher)
+        // console.log("Key for encryption : ", key)
         text = text.toLowerCase();
-        const encryptedText = text.replace(/[a-z]/g, (x) => encryptor(x, cipher));
-        if (encryptedText === null || encryptedText === null) {
+        const encryptedText = text.replace(/[a-z]/g, (x) => encryptor(x, key));
+        if (encryptedText === null || encryptedText === "") {
             return [new Error("Empty file!"), null]
         }
         return [null, encryptedText]
@@ -108,15 +123,26 @@ const encryptText = (text: string): Response<string> => {
     }
 }
 
+
+// function decryptText(text: string, key: encryptionKey) {
+//     try {
+//         const decryptedText = text.replace(/[a-z]/g, (x) => encryptor(x, 26 - key));
+//         if (decryptedText === null || decryptedText === "") {
+//             return [new Error("Empty file!"), null]
+//         }
+//         return [null, decryptedText]
+//     }
+//     catch (error) {
+//         return [error, null]
+//     }
+// }
+
 // create a decryptor and accept cipher as input
 
 
 async function processFile(fileName: string): Promise<Response<wordDictObject>> {
     const [error, lineReader] = getLineReader(fileName);
     if (error !== null) {
-        // return new Promise((resolve) => {
-        //     resolve();
-        // });
         return [error, null]
     }
     let data: wordDictObject = {};
@@ -136,38 +162,89 @@ async function processFile(fileName: string): Promise<Response<wordDictObject>> 
     });
 }
 
-const FILE = "./data/input.txt"
 
-const OUTPUTFILE = "./data/output.txt"
+
+
+
+// MAIN
+
+const FILE: string = "./data/input.txt"
+
+const ENCRYPTED_FILE: string = "./data/encrypted.txt"
+
+const DECRYPTED_FILE: string = "./data/decrypted.txt"
+
+const TRANSLATED_FILE: string = "./data/translated.txt"
 
 const promise = processFile(FILE);
+
+const cipherKey: number = 12;
 
 promise.then(([error, data]) => {
     if (error !== null) {
         console.log(error);
     }
     else {
-        let numWords = 10
-        // console.log(Object.keys(data).length);
+        let numWords = 10;
         const results: word[][] = getMostAndLeast(data, numWords);
-        console.log("Most commonly used words : ", results[0])
-        console.log("Least commonly used words : ", results[1])
+        console.log("Most commonly used words : ", results[0]);
+        console.log("Least commonly used words : ", results[1]);
     }
 })
 
 
-function encryptAndWrite(err: any, fileText: string): void {
-    if (err) {
+// function encryptAndWrite(err: any, fileText: string): void {
+//     if (err) {
+//         console.log(err);
+//         return;
+//     }
+//     const [error, encryptedText] = encryptText(fileText, this.key);
+//     if (error !== null) {
+//         console.log(error);
+//         return;
+//     }
+//     fs.writeFile(this.outputFile, encryptedText, logErrors)
+//     console.log("File encrypted/decrypted successfully at - ", this.outputFile)
+// }
+
+function encryptAndWrite(fileName: string, key: encryptionKey, outputFile: string): void {
+    const [err1, fileText] = readFile(fileName)
+    if (err1 !== null) {
+        console.log(err1);
         return;
     }
-
-    const [error, encryptedText] = encryptText(fileText);
-    if (error !== null) {
+    const [err2, encryptedText] = encryptText(fileText, key);
+    if (err2 !== null) {
+        console.log(err2);
         return;
-
     }
-    fs.writeFile(OUTPUTFILE, encryptedText, logErrors)
-    console.log("File encrypted successfully at - ", OUTPUTFILE)
+    const [err3, outFile] = writeFile(outputFile, encryptedText)
+    if (err3 !== null) {
+        console.log(err3);
+        return;
+    }
+    console.log("File encrypted/decrypted successfully at - ", outputFile)
+}
+
+function readFile(fileName: string): Response<string> {
+    try {
+        const fileText: string = fs.readFileSync(fileName,
+            { encoding: 'utf8', flag: 'r' });
+        return [null, fileText];
+    }
+    catch (e) {
+        return [e, null];
+    }
+}
+
+function writeFile(fileName: string, data: string): Response<string> {
+    try {
+        fs.writeFileSync(fileName, data)
+        return [null, fileName];
+    }
+    catch (e) {
+        return [e, null];
+    }
 }
 
 function logErrors(err: unknown): void {
@@ -176,8 +253,18 @@ function logErrors(err: unknown): void {
 }
 
 // ENCRYPTION
-if (fs.existsSync(FILE)) {
-    fs.readFile(FILE, 'utf8', encryptAndWrite);
+// is bind the smarter way to do this? since fs.readline only passes 2 arguments to the callback function
+// if (fs.existsSync(FILE) && isValidKey(cipherKey)) {
+//     fs.readFile(FILE, 'utf8', encryptAndWrite.bind({ key: cipherKey, outputFile: ENCRYPTED_FILE }));
+// }
+
+if (fs.existsSync(FILE) && isValidKey(cipherKey)) {
+    encryptAndWrite(FILE, cipherKey, ENCRYPTED_FILE)
+}
+
+const decryptionKey = 26 - cipherKey;
+if (fs.existsSync(ENCRYPTED_FILE) && isValidKey(decryptionKey)) {
+    encryptAndWrite(ENCRYPTED_FILE, decryptionKey, DECRYPTED_FILE)
 }
 
 
@@ -195,28 +282,20 @@ const translate = new Translate({
 async function translateText(text: string[], target: string): Promise<Response<string[]>> {
     try {
         let translations: string[][] = await translate.translate(text, target);
-
-        // return new Promise((resolve) => {
-        //     resolve();
-        // });
         return [null, translations[0]]
     }
     catch (error) {
-        // return new Promise((resolve) => {
-        //     resolve([error, null]);
-        // });
-
         return [error, null]
     }
 }
 
 
-// translate the input file instead of the stribng
+// translate the input file instead of the string
 const textData: string[] = ["what are you dong?", "hi how are you"];
 const targetLanguageCode: string = "es";
 
-const translatePromise = translateText(textData, targetLanguageCode);
-translatePromise.then(displayTranslations)
+// const translatePromise = translateText(textData, targetLanguageCode);
+// translatePromise.then(displayTranslations)
 
 
 function displayTranslations([error, translations]: Response<string[]>) {
@@ -232,4 +311,35 @@ function displayTranslation(translation: string, i: number) {
     console.log(`[${i + 1}]`)
     console.log("Original => ", textData[i]);
     console.log("Translated => ", translation);
+}
+
+
+function saveTranslation(response: Response<string[]>, file: string): Response<string> {
+    const [error1, translatedText] = response;
+    if (error1 !== null) {
+        return [error1, null];
+    }
+    const [error2, outFile] = writeFile(file, translatedText[0]);
+    if (error2 !== null) {
+        return [error2, null];
+    }
+    return [null, outFile]
+}
+
+
+const [readError, fileData] = readFile(FILE);
+if (readError !== null) {
+    console.log(readError)
+}
+else {
+    const p = translateText([fileData], targetLanguageCode);
+    p.then((res) => {
+        const [saveErr, savedFile] = saveTranslation(res, TRANSLATED_FILE);
+        if (saveErr !== null) {
+            console.log(saveErr)
+        }
+        else {
+            console.log(`Translated file saved at ${savedFile}`)
+        }
+    })
 }

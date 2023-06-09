@@ -1,0 +1,266 @@
+as an engineering leader, i’ve found many products and engineering teams at startups struggle with being agile.
+
+the shortcuts the startup took early on getting to the point where they could grow had benefits, but also costs. at some point, enough technical, capability, knowledge, and organizational debt has been created such that there is a constant stream of bugs, internal asks, interruptions that only the engineering team can handle.
+
+these ask come in at a rapid pace, sometimes several days, greatly disrupting the work of an engineer. even if each interruption only takes a few minutes, the context switch alone can destroy any hope of productivity for that afternoon.
+
+how can an organization handle these in a way that makes sense?
+
+enter the qrf team
+the qrf model works incredibly well in certain contexts without the negative drawbacks of other approaches.
+
+what is it?
+you split your engineering organizational unit into two discrete, independent teams:
+
+team 1, designated as the main effort
+team 2, designated as the qrf
+team 1’s charter is simple: build what’s on the roadmap. they act as a typical product development team does, working on high-value, high-priority items at a road mapped, predictable tempo, using whatever framework or methodology is appropriate — eg. scrum or kanban.
+
+in short — they work on the main effort of the company.
+
+team 2’s mission is to tackle any item that would cause an interruption to team 1. they act as the qrf, the quick reaction force, to jump in front of any problems that would otherwise interrupt the sprint. in short — they prevent interruptions and act as a supporting effort.
+
+qrf solves problems found in other approaches
+the reason qrf works is that the other commonly adopted “agile” approaches have fundamental drawbacks that limit their effectiveness in certain cases.
+
+these approaches include:
+
+working only on the valuable items
+putting it in the next sprint
+setting aside a set capacity/timebox per sprint
+why working only on valuable items fails
+what will win a prioritization argument:
+
+setting up a user account
+an idea that can generate $1,000,000,000
+the next billion-dollar idea will always win any prioritization argument, because it’s an unknown, idealized, easily manipulated projection. however, focusing exclusively on innovating with new product ideas means your current customers are not being served.
+
+this is the delta between innovation and operation: you need both to thrive in the market, but most product prioritization arguments devalue operations. few product managers want to work on an incrementally valuable item when the option is an exponentially valuable one.
+
+this means the incremental things: internal tooling, bug fixes, automation, tech debt, etc. all fail to be prioritized when viewed exclusively from the lens of “value”. this is because they often have some known, smaller quantifiable value, and these pale in comparison to the idealized unverified projections.
+
+at the end of the day, prioritization is an art, not a science, no matter how many structured frameworks we use.
+
+
+value-based prioritization helps ensure some things never get done.
+why putting it in the next sprint fails
+some teams try to solve this problem by sticking rigidly to the sprint commitment. whenever an interruption request comes in, they say “we’ve already planned this sprint, so we’ll put it in the next sprint”.
+
+unfortunately, by the time the next sprint comes along, there’s an additional 15 items in the backlog, all needing to get done.
+
+rinse and repeat until there’s a large list of items, most of which never end up being completed. the team starts being viewed as inflexible by customers, others in the company, and by executive sponsors.
+
+why does this approach fail?
+the approach assumes that things can wait until the sprint is over.
+
+the truth is, some things can’t wait. compliance demands, a new employee onboarding, a large customer’s tiny configuration change — these are activity-generated work that just needs to get done with some sort of time-sensitive cadence.
+
+not fulfilling these requests within a short amount of time can cause reputation damage or operational risks.
+
+
+the “next sprint” is too far away and never has enough room for new items.
+why setting aside set capacity fails
+another approach teams take is to dedicate a certain amount of time, such as 10% of a sprint, or a single day a week, to solve these issues.
+
+why does this approach fail?
+for low-volume interruptions, it works, but for organizations with a high volume of interruptions, it doesn’t — the rate of intake just gets too overwhelming.
+
+additionally, by making it a “10%” thing, it causes a belief that the work is unimportant and a distraction. this means engineers aren’t as motivated to complete it, which results in a certain level of ineffectiveness when executing on these tasks.
+
+there’s also an implicit assumption that you can actually get enough of the items done within that time-box.
+
+in many circumstances, you won’t, and then you’re back at square one.
+
+
+new request volume can overwhelm planned capacity and time-boxes.
+let’s solve the real problem
+the real problem here is that the team is operating at a tempo that is slower than the environment demands.
+
+if you get five urgent requests every day, but you only pick up new work every 2 weeks, that means customers can potentially wait up to 4 weeks just to get something resolved. in the startup world, 4 weeks can be an unacceptably long time. that assumes it manages to find prioritization against the planned roadmap (which is often not the case).
+
+this ultimately causes things to pile up, customers to get unhappy: “why does it take a week to set up a single configuration?” perception is impacted negatively.
+
+this is why the qrf solution works well — it forces an operation at a faster tempo.
+
+there are a lot of other benefits with the qrf model
+systematic reduction of context switches
+the first and foremost benefit is that interruptive tasks can be handled by a single, dedicated execution stream. while that team may context switch frequently, the organization as a whole ends up switching away from important things less.
+
+this helps prevent context shifts away from the primary focus of the organization, which should be on non-urgent, important work.
+
+it’s ultimately a system-level optimization at a local-level cost.
+
+improved organizational agility and responsiveness
+a second benefit is that it increases the organizations’ perceived responsiveness to requests.
+
+many organizations will perform some form of agile ritual where direction is pivoted and work is defined and set every 2 weeks. this means, in an unlucky case, there’s a theoretically maximum lead time of up to 4 weeks from the point a customer makes a request to the point it is fulfilled.
+
+the qrf team helps provide a faster response time for such requests. i’ve seen consistent lead times of under 3 days from request to delivery for items — it helps improve customer satisfaction and service satisfaction.
+
+dedication to maintenance and support
+maintenance is the most costly aspect of a system’s lifecycle. it gets costly because it often gets delayed, which increases the risk and work required to maintain the system.
+
+the qrf helps ensure that important maintenance doesn’t go undone — eg. things like bugs, operational tooling, and other items.
+
+how qrf operates — in more detail
+operating modes
+qrfs operate with two operating modes:
+
+reaction
+standby
+during “reaction”, the qrf team is actively firefighting — solving some urgent, interruptive issue as the first line of defense against interruptions and supporting the other team by allowing it to focus.
+
+during “standby” the qrf team works on preventative “shift left” items or things that help it react faster. these could be internal tools, improved monitoring / alerting, quality-of-life improvements, automation, or improved observability in logs or audits — it’s up to the qrf team to decide how they want to fill this time.
+
+shift left
+the biggest part of qrf’s mission is to “shift left” on interruptions. they should strive not just to react to solve the instance of a problem but to avoid the entire class of problems from ever reaching engineering in the first place.
+
+what does shifting left look like on qrf?
+this looks different for every company and problem, but some common “shift left” solutions include:
+
+creating admin tooling to let internal teams perform actions on their own
+fixing bugs or ux in areas of the product that lead to engineering requests
+improving monitoring, traceability, and observability so that investigations can be completed faster
+creating easy-to-use queries or exports so others can see data they need without engineering
+documenting common engineering maintenance tasks so that others can solve it
+over time, as categories of interruptions are shifted left, the engineering organization as a whole has more room to focus on the execution of higher-value items.
+
+working with stakeholders
+qrf works closely with stakeholders across the entire organization — especially internal teams like support, customer success, and operations. it’s important to stay in touch with these stakeholders and keep them consulted or informed regarding any changes to their workflows or resolutions to requests they may have made.
+
+measuring qrf performance
+there are several ways you can measure how a qrf team is performing:
+
+issue resolution rate — how many issues did the qrf team solve?
+cycle time and lead time — how long did a requestor wait for “done”?
+items shifted left — how many issue types and issues did qrf prevent?
+interruptions prevented — how many urgent items did the main effort team not have to handle?
+all of these are legitimate ways of evaluating that the qrf is working.
+
+issue resolution rate is essentially the throughput of interruptive requests. put another way, it would be the number of interruptions your main product team would have to handle if you didn’t have a qrf team.
+
+performing categorization on these completed items can give key insights into the makeup and source of the various interruptions that would be experienced by your organization:
+
+a high number of bugs could indicate quality issues
+a high number of investigative asks could be a visibility issue
+a high number of mundane data tasks could indicate a missing internal tool
+cycle time and lead time can be used to provide predictive averages for new requests to requestors. if, for example, it took the last 100 items an average lead time of 3 days to complete, then a requestor can expect that, on average, their request will take 3 days.
+
+items shifted left represents the number of discrete workflows or categories of items that the qrf team has successfully prevented from ever occurring again. this represents initiative-gaining preventative work. each category may represent dozens or hundreds of future interruptions that were prevented.
+
+interruptions prevented is a metric that can be used to measure how ahead of the problem the qrf team is getting. one an item is shifted left (eg. through an internal tool) any future possible use of that “shift left” solution is an issue that engineering didn’t have to solve.
+
+a qrf success story
+i’ve successfully implemented this model at a few companies now.
+
+one, which i’ll call “payco”, had a massive problem: over a dozen requests were coming in every single day, and only a couple of key engineers in the company knew how to solve them. they were busy working on other things, so those things didn’t get done, adding to an ever-growing backlog. eventually, the embers would turn into a fire that required immediate attention, causing severe interruptions.
+
+when i first joined, there was a massive backlog of tasks and asks. i knew this wasn’t sustainable, so i quickly spun up a qrf team.
+
+it was initially a slog. every problem and request we encountered was novel and discovering how to resolve it took time.
+
+however, we explicitly and carefully documented the problems and solutions we encountered, creating step-by-step guides and even writing quick “fill-in-the-blank” scripts we could use in the future. from the work, we identified and documented solutions to over 40 categories of requests.
+
+from these categories, we identified key patterns:
+
+certain departments had high levels of requests brought on by a lack of visibility
+some frequent requestors asked for information that we could easily provide in their existing tooling
+some people just access issues — they could easily perform the action had they had access to the right tool
+we implemented a series of shift-left work and completely erased the intake of 25 of those categories of requests from ever reaching engineering by empowering the requestors to solve the problems themselves or by addressing the root cause of the issues.
+
+we went from handling and resolving 10+ interruptive requests per day to receiving less than 3 a week in just two short quarters, and eventually, sunset the qrf team as the first-response and turned it into an overflow response for the other teams.
+
+implementation advice
+in order for qrf to succeed, it requires a certain set of commitments from the organization.
+
+qrf must own its own intake and prioritization.
+this means that other teams can’t tell qrf what to do. it chooses based on its mission to prevent interruptions and its capabilities to do so.
+
+qrf cannot have a roadmap or backlog.
+the whole point of qrf is to be responsive, and it can’t be responsive if it has a backlog of commitments it must deliver on. the team should always be free to drop whatever it is doing to work on something else if it is desired.
+
+qrf must have the authority to resolve issues.
+it must be able to work with stakeholders and other departments directly to resolve issues, which might include process changes, interface tweaks, or the introduction of tooling. any permission gating simply adds wait time and delays, which makes the team less responsive and interruptions more urgent.
+
+qrf must be generalists with high initiative, adaptability, and attention to detail.
+the team needs to be staffed with engineers who enjoy working on different things, diving into problems, working with stakeholders, and recording and tracking resolutions down with little to no support. otherwise, it becomes difficult for them to affect change, gather information, and share larger solutions with the company.
+
+the company must intake requests into a central location.
+qrf works when it can easily identify requests that fit its operating parameters and can identify long-term request patterns. this can only be done if requests are articulated consistently and visibly.
+
+in short — qrf can’t respond to requests it doesn’t know about.
+
+if you don’t have a formal intake process, set one up!
+
+members of qrf must be thorough, clear documenters.
+part of qrf is discovering how to resolve an issue and making it so it only needs to be solved once — this often means writing down resolution steps in a way that can be reproduced by others across the company, or detailing requests and resolutions so that patterns can be uncovered for a larger preventative solution.
+
+if you staff a qrf team with people who hate documentation, the team will end up solving the same problem over and over.
+
+avoid short-term engineer rotations.
+there’s a certain amount of familiarity that is required to be effective in the qrf operational model that you just can’t build in a couple weeks. you need to be able to chase down threads, communicate with stakeholders, identify patterns to shift left. switching an engineer off every couple of weeks prevents that momentum from building.
+
+set a response sla.
+the whole point of qrf is providing responses in a timely fashion. therefore, have the team commit to a response service level agreement.
+
+something like “we will respond to all requests within 48-hours” will help keep it from becoming an unpredictable black hole. note that response doesn’t necessarily mean resolution — it just means that people will know whether it is going to be picked up by qrf or not.
+
+frequently asked questions
+isn’t that a bug team?
+it’s easy to think “oh this is a bug team” — you couldn’t be farther from the truth.
+
+yes — it often starts out as a team that fixes a lot of bugs, but qrf is distinct in the way it prioritizes. bug teams prioritize based on the criticality of a bug and go from there, and only work on bugs.
+
+the qrf, on the other hand, prioritizes based on the level of interruptive-ness and inefficiency. they may work on items that aren’t bugs at all. their job is to prevent interruptions, not fix bugs. this may mean letting some bugs occur and remain in the system to create a longer-term preventative solution for another interruption.
+
+how do you get engineers motivated to work on these tiny items?
+autonomy and gratitude.
+
+one key part of qrf is that it allows for infinite autonomy, which is a large part of the draw for many engineers. engineers on the team essentially get to decide what to work on during standby, provided you fulfill the reaction slas.
+
+initially, there won’t be a lot of downtimes, but gaps eventually form between one urgent item and the next. it’s in these gaps that the engineer can multiply their impact.
+
+due to the nature of requests, the qrf is also a team where you interact directly with the people you help. some engineers find it incredibly motivating to deploy a fix or a tool and have an opportunity to speak immediately with the people who benefited the most from it. for all of the talk of customer collaboration in many product development teams, far too many continue to silo their engineers from their user-base, which makes opportunities like this an exception, not the norm.
+
+ultimately though, the qrf is not for everyone. if the engineer wants to just head down and code, don’t put them on a qrf team.
+
+should the qrf do scrum?
+no — scrum’s prioritization tempo can be too long. the qrf may reprioritize daily, even in some cases several times a day, depending on the fires. that’s what makes it powerful — it’s a commitment to allow for that. scrum does the opposite — it creates a near-immutable contract that specifies that reprioritization should (ideally) only occur at the end of a sprint.
+
+it’s recommended that qrf does a pull-based execution model such as kanban. kanban works well because it helps limit work-in-progress, reduces batch sizes, makes work visible, and allows for swarming on blockers.
+
+what happens if qrf runs out of stuff to do?
+they work on preventative, shift-left work, or other multiplier items — it is really up to the discretion of the members of that team. the only criteria are that they keep their queue as clear as possible by responding to and resolving items in a timely fashion.
+
+this means not chewing off massive, blocking multi-month projects and ensuring things they deliver are done iteratively and incrementally, in a way that can be dropped or interrupted at any time.
+
+if the unlikely scenario that qrf truly does run out of interruptions to handle, it means they’ve done their job! it’s a smooth transition from there to become an internal team working on supporting efforts, a developer ux team, or be folded into another team altogether.
+
+isn’t this just adding a capacity commitment with extra steps?
+if you look at it purely from the perspective of engineering capacity — then, yes. however, that’s an over-simplified comparison — you won’t get the same results if you were to take that same capacity and put it on a normal product team.
+
+that’s because a key component of the qrf is that it operates completely differently than how other engineering teams in your company might operate. the team’s charter on prevention helps reduce incoming interruptions in the long-term a lot better than a partial-attention model might. the motivator of infinite autonomy helps keep engineers working in the model motivated and retained.
+
+how many engineers do you need on the qrf team?
+that’s up to you — the model can work with just a single engineer for a tiny team, or you can even have a team of several engineers. the important part is examining your rate of interruptive intake and making sure the qrf is staffed appropriately to prevent a significant number of those interruptions.
+
+if it gets to the point your team needs to have a qrf larger than the main effort team, that’s highly indicative of much larger, upstream, possibly cross-functional organizational issues that need to be shifted left, such as consistent poor requirements, technical quality, or prioritization discipline.
+
+context matters
+the qrf model can be highly effective but remember: there is no silver bullet that works in every scenario. examine your context and situation.
+
+i’ve found great success with this model in environments where:
+
+engineering is frequently interrupted in high-urgency environments
+complexity is such that the qrf can quickly onboard into areas
+prioritization frameworks place low value on operational asks
+there is limited capacity relative to the work
+the interruptions are incrementally valuable, or must actually be done
+this model likely won’t work or be effective in environments where:
+
+the interruptions are truly not important
+the interruptions frequently turn into meaningful strategic pivots
+solutions require highly specialized knowledge or expertise
+enough capacity exists where interruptions can be absorbed by the organization as a whole
+a mature prioritization process is already in use that factors in operational needs as well as innovation
+context matters. ultimately, a blog post on the internet can’t fix your problems for you — at best it can give you a mental model that you can apply and possibly mold after evaluating your own context and needs. it’s quite possible a qrf model will solve your problem, but the opposite can be true as well: you’ll know best.
