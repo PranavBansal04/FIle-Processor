@@ -145,19 +145,6 @@ function encryptText(text, key) {
         return [error, null];
     }
 }
-// function decryptText(text: string, key: encryptionKey) {
-//     try {
-//         const decryptedText = text.replace(/[a-z]/g, (x) => encryptor(x, 26 - key));
-//         if (decryptedText === null || decryptedText === "") {
-//             return [new Error("Empty file!"), null]
-//         }
-//         return [null, decryptedText]
-//     }
-//     catch (error) {
-//         return [error, null]
-//     }
-// }
-// create a decryptor and accept cipher as input
 function processFile(fileName) {
     return __awaiter(this, void 0, void 0, function () {
         var _a, error, lineReader, data;

@@ -124,22 +124,6 @@ function encryptText(text: string, key: encryptionKey): Response<string> {
 }
 
 
-// function decryptText(text: string, key: encryptionKey) {
-//     try {
-//         const decryptedText = text.replace(/[a-z]/g, (x) => encryptor(x, 26 - key));
-//         if (decryptedText === null || decryptedText === "") {
-//             return [new Error("Empty file!"), null]
-//         }
-//         return [null, decryptedText]
-//     }
-//     catch (error) {
-//         return [error, null]
-//     }
-// }
-
-// create a decryptor and accept cipher as input
-
-
 async function processFile(fileName: string): Promise<Response<wordDictObject>> {
     const [error, lineReader] = getLineReader(fileName);
     if (error !== null) {
