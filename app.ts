@@ -24,7 +24,7 @@ function isValidKey(value: unknown): value is encryptionKey {
 }
 
 
-const getLineReader = (filePath: string): Response<readline.Interface> => {
+function getLineReader(filePath: string): Response<readline.Interface> {
     if (!fs.existsSync(filePath)) {
         return [new Error("file does not exist"), null]
     }
@@ -40,7 +40,7 @@ const getLineReader = (filePath: string): Response<readline.Interface> => {
     }
 }
 
-const isValidUrl = (urlString: string): boolean => {
+function isValidUrl(urlString: string): boolean {
     try {
         let url = new URL(urlString);
     }
@@ -54,8 +54,8 @@ const isValidUrl = (urlString: string): boolean => {
 
 // object signature
 // remove stop words as well, probably need to use the nltk package
-const countWords = (fileData: wordDictObject, line: string): wordDictObject => {
-    const stopwords = ['i','me','my','myself','we','our','ours','ourselves','you','your','yours','yourself','yourselves','he','him','his','himself','she','her','hers','herself','it','its','itself','they','them','their','theirs','themselves','what','which','who','whom','this','that','these','those','am','is','are','was','were','be','been','being','have','has','had','having','do','does','did','doing','a','an','the','and','but','if','or','because','as','until','while','of','at','by','for','with','about','against','between','into','through','during','before','after','above','below','to','from','up','down','in','out','on','off','over','under','again','further','then','once','here','there','when','where','why','how','all','any','both','each','few','more','most','other','some','such','no','nor','not','only','own','same','so','than','too','very','s','t','can','will','just','don','should','now']
+function countWords(fileData: wordDictObject, line: string): wordDictObject {
+    const stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now']
     const words: string[] = line.split(" ");
     // let's load english stopwords
 
@@ -70,7 +70,7 @@ const countWords = (fileData: wordDictObject, line: string): wordDictObject => {
         if (currentWord === "") {
             return;
         }
-        if(stopwords.includes(currentWord)){
+        if (stopwords.includes(currentWord)) {
             return;
         }
         if (currentWord in newFileData) {
@@ -85,7 +85,7 @@ const countWords = (fileData: wordDictObject, line: string): wordDictObject => {
 }
 
 
-const getMostAndLeast = (data: wordDictObject, n: number): word[][] => {
+function getMostAndLeast(data: wordDictObject, n: number): word[][] {
     let wordCount: word[] = [];
     Object.keys(data).forEach(key => {
         wordCount.push(data[key])
@@ -149,34 +149,6 @@ async function processFile(fileName: string): Promise<Response<wordDictObject>> 
 
 
 
-
-// MAIN
-
-const FILE: string = "./data/input.txt"
-
-const ENCRYPTED_FILE: string = "./data/encrypted.txt"
-
-const DECRYPTED_FILE: string = "./data/decrypted.txt"
-
-const TRANSLATED_FILE: string = "./data/translated.txt"
-
-const promise = processFile(FILE);
-
-const cipherKey: number = 12;
-
-promise.then(([error, data]) => {
-    if (error !== null) {
-        console.log(error);
-    }
-    else {
-        let numWords = 10;
-        const results: word[][] = getMostAndLeast(data, numWords);
-        console.log("Most commonly used words : ", results[0]);
-        console.log("Least commonly used words : ", results[1]);
-    }
-})
-
-
 // function encryptAndWrite(err: any, fileText: string): void {
 //     if (err) {
 //         console.log(err);
@@ -236,6 +208,78 @@ function logErrors(err: unknown): void {
     if (err) console.log(err);
 }
 
+async function translateText(text: string[], target: string): Promise<Response<string[]>> {
+    try {
+        let translations: string[][] = await translate.translate(text, target);
+        return [null, translations[0]]
+    }
+    catch (error) {
+        return [error, null]
+    }
+}
+
+function saveTranslation(response: Response<string[]>, file: string): Response<string> {
+    const [error1, translatedText] = response;
+    if (error1 !== null) {
+        return [error1, null];
+    }
+    const [error2, outFile] = writeFile(file, translatedText[0]);
+    if (error2 !== null) {
+        return [error2, null];
+    }
+    return [null, outFile]
+}
+
+function translateAndSave(fileName: string, targetLanguageCode: string): void {
+    const [readError, fileData] = readFile(FILE);
+    if (readError !== null) {
+        console.log(readError);
+        return;
+    }
+
+    const promise = translateText([fileData], targetLanguageCode);
+    promise.then((res) => {
+        const [saveErr, savedFile] = saveTranslation(res, TRANSLATED_FILE);
+        if (saveErr !== null) {
+            console.log(saveErr)
+            return;
+        }
+        console.log(`Translated file saved at ${savedFile}`)
+        return;
+    })
+    console.log("Error performing translation or writing." )
+    return;
+}
+
+
+
+// MAIN
+
+const FILE: string = "./data/input.txt"
+
+const ENCRYPTED_FILE: string = "./data/encrypted.txt"
+
+const DECRYPTED_FILE: string = "./data/decrypted.txt"
+
+const TRANSLATED_FILE: string = "./data/translated.txt"
+
+const promise = processFile(FILE);
+
+const cipherKey: number = 12;
+
+promise.then(([error, data]) => {
+    if (error !== null) {
+        console.log(error);
+    }
+    else {
+        let numWords = 10;
+        const results: word[][] = getMostAndLeast(data, numWords);
+        console.log("Most commonly used words : ", results[0]);
+        console.log("Least commonly used words : ", results[1]);
+    }
+})
+
+
 // ENCRYPTION
 // is bind the smarter way to do this? since fs.readline only passes 2 arguments to the callback function
 // if (fs.existsSync(FILE) && isValidKey(cipherKey)) {
@@ -255,7 +299,7 @@ if (fs.existsSync(ENCRYPTED_FILE) && isValidKey(decryptionKey)) {
 // Imports the Google Cloud client library
 const { Translate } = require('@google-cloud/translate').v2;
 
-const GOOGLE_APPLICATION_CREDENTIALS = "./credentials/credentials.json"
+const GOOGLE_APPLICATION_CREDENTIALS: string = "./credentials/credentials.json"
 
 // Creates a client
 const translate = new Translate({
@@ -263,67 +307,36 @@ const translate = new Translate({
     keyFilename: GOOGLE_APPLICATION_CREDENTIALS
 });
 
-async function translateText(text: string[], target: string): Promise<Response<string[]>> {
-    try {
-        let translations: string[][] = await translate.translate(text, target);
-        return [null, translations[0]]
-    }
-    catch (error) {
-        return [error, null]
-    }
-}
+
 
 
 // translate the input file instead of the string
 const textData: string[] = ["what are you dong?", "hi how are you"];
 const targetLanguageCode: string = "es";
 
+// TRANSLATE AND SAVE THE FILE
+translateAndSave(FILE, targetLanguageCode);
+
 // const translatePromise = translateText(textData, targetLanguageCode);
 // translatePromise.then(displayTranslations)
 
 
-function displayTranslations([error, translations]: Response<string[]>) {
-    if (error !== null) {
-        console.log(error);
-        return;
-    }
-    translations.forEach(displayTranslation);
+// function displayTranslations([error, translations]: Response<string[]>) {
+//     if (error !== null) {
+//         console.log(error);
+//         return;
+//     }
+//     translations.forEach(displayTranslation);
 
-}
+// }
 
-function displayTranslation(translation: string, i: number) {
-    console.log(`[${i + 1}]`)
-    console.log("Original => ", textData[i]);
-    console.log("Translated => ", translation);
-}
-
-
-function saveTranslation(response: Response<string[]>, file: string): Response<string> {
-    const [error1, translatedText] = response;
-    if (error1 !== null) {
-        return [error1, null];
-    }
-    const [error2, outFile] = writeFile(file, translatedText[0]);
-    if (error2 !== null) {
-        return [error2, null];
-    }
-    return [null, outFile]
-}
+// function displayTranslation(translation: string, i: number) {
+//     console.log(`[${i + 1}]`)
+//     console.log("Original => ", textData[i]);
+//     console.log("Translated => ", translation);
+// }
 
 
-const [readError, fileData] = readFile(FILE);
-if (readError !== null) {
-    console.log(readError)
-}
-else {
-    const p = translateText([fileData], targetLanguageCode);
-    p.then((res) => {
-        const [saveErr, savedFile] = saveTranslation(res, TRANSLATED_FILE);
-        if (saveErr !== null) {
-            console.log(saveErr)
-        }
-        else {
-            console.log(`Translated file saved at ${savedFile}`)
-        }
-    })
-}
+
+
+exports.isValidUrl = isValidUrl;

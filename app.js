@@ -61,7 +61,7 @@ function isValidKey(value) {
     }
     return false;
 }
-var getLineReader = function (filePath) {
+function getLineReader(filePath) {
     if (!fs.existsSync(filePath)) {
         return [new Error("file does not exist"), null];
     }
@@ -75,8 +75,8 @@ var getLineReader = function (filePath) {
     catch (error) {
         return [error, null];
     }
-};
-var isValidUrl = function (urlString) {
+}
+function isValidUrl(urlString) {
     try {
         var url = new URL(urlString);
     }
@@ -84,10 +84,10 @@ var isValidUrl = function (urlString) {
         return false;
     }
     return true;
-};
+}
 // object signature
 // remove stop words as well, probably need to use the nltk package
-var countWords = function (fileData, line) {
+function countWords(fileData, line) {
     var stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now'];
     var words = line.split(" ");
     // let's load english stopwords
@@ -113,8 +113,8 @@ var countWords = function (fileData, line) {
         }
     });
     return newFileData;
-};
-var getMostAndLeast = function (data, n) {
+}
+function getMostAndLeast(data, n) {
     var wordCount = [];
     Object.keys(data).forEach(function (key) {
         wordCount.push(data[key]);
@@ -123,7 +123,7 @@ var getMostAndLeast = function (data, n) {
         return b.count - a.count;
     });
     return [wordCount.slice(0, n), wordCount.slice(wordCount.length - n, wordCount.length)];
-};
+}
 function encryptor(char, key) {
     var charCode = char.charCodeAt(0);
     // A = 65, Z = 90
@@ -170,25 +170,6 @@ function processFile(fileName) {
         });
     });
 }
-// MAIN
-var FILE = "./data/input.txt";
-var ENCRYPTED_FILE = "./data/encrypted.txt";
-var DECRYPTED_FILE = "./data/decrypted.txt";
-var TRANSLATED_FILE = "./data/translated.txt";
-var promise = processFile(FILE);
-var cipherKey = 12;
-promise.then(function (_a) {
-    var error = _a[0], data = _a[1];
-    if (error !== null) {
-        console.log(error);
-    }
-    else {
-        var numWords = 10;
-        var results = getMostAndLeast(data, numWords);
-        console.log("Most commonly used words : ", results[0]);
-        console.log("Least commonly used words : ", results[1]);
-    }
-});
 // function encryptAndWrite(err: any, fileText: string): void {
 //     if (err) {
 //         console.log(err);
@@ -243,6 +224,74 @@ function logErrors(err) {
     if (err)
         console.log(err);
 }
+function translateText(text, target) {
+    return __awaiter(this, void 0, void 0, function () {
+        var translations, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, translate.translate(text, target)];
+                case 1:
+                    translations = _a.sent();
+                    return [2 /*return*/, [null, translations[0]]];
+                case 2:
+                    error_1 = _a.sent();
+                    return [2 /*return*/, [error_1, null]];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+}
+function saveTranslation(response, file) {
+    var error1 = response[0], translatedText = response[1];
+    if (error1 !== null) {
+        return [error1, null];
+    }
+    var _a = writeFile(file, translatedText[0]), error2 = _a[0], outFile = _a[1];
+    if (error2 !== null) {
+        return [error2, null];
+    }
+    return [null, outFile];
+}
+function translateAndSave(fileName, targetLanguageCode) {
+    var _a = readFile(FILE), readError = _a[0], fileData = _a[1];
+    if (readError !== null) {
+        console.log(readError);
+        return;
+    }
+    var promise = translateText([fileData], targetLanguageCode);
+    promise.then(function (res) {
+        var _a = saveTranslation(res, TRANSLATED_FILE), saveErr = _a[0], savedFile = _a[1];
+        if (saveErr !== null) {
+            console.log(saveErr);
+            return;
+        }
+        console.log("Translated file saved at ".concat(savedFile));
+        return;
+    });
+    console.log("Error performing translation or writing.");
+    return;
+}
+// MAIN
+var FILE = "./data/input.txt";
+var ENCRYPTED_FILE = "./data/encrypted.txt";
+var DECRYPTED_FILE = "./data/decrypted.txt";
+var TRANSLATED_FILE = "./data/translated.txt";
+var promise = processFile(FILE);
+var cipherKey = 12;
+promise.then(function (_a) {
+    var error = _a[0], data = _a[1];
+    if (error !== null) {
+        console.log(error);
+    }
+    else {
+        var numWords = 10;
+        var results = getMostAndLeast(data, numWords);
+        console.log("Most commonly used words : ", results[0]);
+        console.log("Least commonly used words : ", results[1]);
+    }
+});
 // ENCRYPTION
 // is bind the smarter way to do this? since fs.readline only passes 2 arguments to the callback function
 // if (fs.existsSync(FILE) && isValidKey(cipherKey)) {
@@ -263,67 +312,23 @@ var translate = new Translate({
     projectId: 'chrome-flight-389215',
     keyFilename: GOOGLE_APPLICATION_CREDENTIALS
 });
-function translateText(text, target) {
-    return __awaiter(this, void 0, void 0, function () {
-        var translations, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, translate.translate(text, target)];
-                case 1:
-                    translations = _a.sent();
-                    return [2 /*return*/, [null, translations[0]]];
-                case 2:
-                    error_1 = _a.sent();
-                    return [2 /*return*/, [error_1, null]];
-                case 3: return [2 /*return*/];
-            }
-        });
-    });
-}
 // translate the input file instead of the string
 var textData = ["what are you dong?", "hi how are you"];
 var targetLanguageCode = "es";
+// TRANSLATE AND SAVE THE FILE
+translateAndSave(FILE, targetLanguageCode);
 // const translatePromise = translateText(textData, targetLanguageCode);
 // translatePromise.then(displayTranslations)
-function displayTranslations(_a) {
-    var error = _a[0], translations = _a[1];
-    if (error !== null) {
-        console.log(error);
-        return;
-    }
-    translations.forEach(displayTranslation);
-}
-function displayTranslation(translation, i) {
-    console.log("[".concat(i + 1, "]"));
-    console.log("Original => ", textData[i]);
-    console.log("Translated => ", translation);
-}
-function saveTranslation(response, file) {
-    var error1 = response[0], translatedText = response[1];
-    if (error1 !== null) {
-        return [error1, null];
-    }
-    var _a = writeFile(file, translatedText[0]), error2 = _a[0], outFile = _a[1];
-    if (error2 !== null) {
-        return [error2, null];
-    }
-    return [null, outFile];
-}
-var _a = readFile(FILE), readError = _a[0], fileData = _a[1];
-if (readError !== null) {
-    console.log(readError);
-}
-else {
-    var p = translateText([fileData], targetLanguageCode);
-    p.then(function (res) {
-        var _a = saveTranslation(res, TRANSLATED_FILE), saveErr = _a[0], savedFile = _a[1];
-        if (saveErr !== null) {
-            console.log(saveErr);
-        }
-        else {
-            console.log("Translated file saved at ".concat(savedFile));
-        }
-    });
-}
+// function displayTranslations([error, translations]: Response<string[]>) {
+//     if (error !== null) {
+//         console.log(error);
+//         return;
+//     }
+//     translations.forEach(displayTranslation);
+// }
+// function displayTranslation(translation: string, i: number) {
+//     console.log(`[${i + 1}]`)
+//     console.log("Original => ", textData[i]);
+//     console.log("Translated => ", translation);
+// }
+exports.isValidUrl = isValidUrl;
